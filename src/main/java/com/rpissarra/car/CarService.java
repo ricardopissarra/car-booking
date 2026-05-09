@@ -7,9 +7,10 @@ public class CarService {
 
     private CarDao carDao;
 
-    public CarService() {
-        this.carDao = new CarDao();
+    public CarService(CarDao carDao) {
+        this.carDao = carDao;
     }
+
 
     public Optional<Car> findByCarId(UUID carId) {
         Car[] cars = carDao.findAll();

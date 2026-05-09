@@ -1,8 +1,15 @@
 package com.rpissarra;
 
 import com.rpissarra.booking.CarBooking;
+import com.rpissarra.booking.CarBookingDao;
+import com.rpissarra.booking.CarBookingFileDataAccessService;
 import com.rpissarra.booking.CarBookingService;
+
+import com.rpissarra.car.CarDao;
+import com.rpissarra.car.CarFileDataAccessService;
 import com.rpissarra.car.CarService;
+import com.rpissarra.user.UserDao;
+import com.rpissarra.user.UserFileDataAccessService;
 import com.rpissarra.user.UserService;
 
 import java.time.LocalDate;
@@ -13,11 +20,22 @@ import java.util.UUID;
 
 public class Main {
 
+    public static final String BOOKINGS_FILE_PATH = "src/main/java/com/rpissarra/bookings.dat";
+    private static final String USERS_FILE_PATH = "src/main/java/com/rpissarra/users.dat";
+    private static final String CARS_FILE_PATH = "src/main/java/com/rpissarra/cars.dat";
+
     public static void main(String[] args) {
         Scanner scanner = new Scanner(System.in);
-        CarBookingService carBookingService = new CarBookingService();
-        CarService carService = new CarService();
-        UserService userService = new UserService();
+
+        CarDao carDao = new CarFileDataAccessService(CARS_FILE_PATH);
+        CarService carService = new CarService(carDao);
+
+        UserDao userDao = new UserFileDataAccessService(USERS_FILE_PATH);
+        UserService userService = new UserService(userDao);
+
+        CarBookingDao carBookingDao = new CarBookingFileDataAccessService(BOOKINGS_FILE_PATH);
+        CarBookingService carBookingService = new CarBookingService(carService, userService, carBookingDao);
+
         boolean loopIsActive = true;
         while (loopIsActive) {
             System.out.println("""
