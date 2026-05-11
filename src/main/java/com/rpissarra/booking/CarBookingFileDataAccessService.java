@@ -75,7 +75,7 @@ public class CarBookingFileDataAccessService implements CarBookingDao {
             return true;
         } catch (IOException e) {
             System.err.println("Error deleting booking with id %s".formatted(id));
+            return false;
         }
-        return false;
     }
 }
