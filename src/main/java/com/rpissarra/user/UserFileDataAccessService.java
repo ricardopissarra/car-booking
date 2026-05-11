@@ -22,8 +22,10 @@ public class UserFileDataAccessService implements UserDao {
                 users[index++] =(User) ois.readObject();
             }
             return users;
+        } catch (FileNotFoundException e){
+            System.err.println("File doesn't exist yet.");
         } catch (IOException | ClassNotFoundException e) {
-
+            System.err.println("Error reading users from file.");
         }
         return new User[0];
     }

@@ -23,8 +23,10 @@ public class CarBookingFileDataAccessService implements CarBookingDao {
                 bookings[index++] =(CarBooking) ois.readObject();
             }
             return bookings;
+        } catch (FileNotFoundException e){
+            System.err.println("File doesn't exist yet.");
         } catch (IOException | ClassNotFoundException e) {
-
+            System.err.println("Error reading bookings from file.");
         }
         return new CarBooking[0];
     }
@@ -61,11 +63,7 @@ public class CarBookingFileDataAccessService implements CarBookingDao {
         try (FileOutputStream fos = new FileOutputStream(filePath);
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
 
-            for (CarBooking cb : bookings) {
-                if (cb != null && cb.getId().equals(id)) {
-                    oos.writeInt((bookings.length - 1));
-                }
-            }
+            oos.writeInt((bookings.length - 1));
 
             for (CarBooking cb : bookings) {
                 if (cb != null && cb.getId().equals(id)) {
@@ -75,7 +73,8 @@ public class CarBookingFileDataAccessService implements CarBookingDao {
             }
 
             return true;
-        } catch (IOException _) {
+        } catch (IOException e) {
+            System.err.println("Error deleting booking with id %s".formatted(id));
         }
         return false;
     }

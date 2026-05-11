@@ -21,8 +21,10 @@ public class CarFileDataAccessService implements CarDao {
                 cars[index++] =(Car) ois.readObject();
             }
             return cars;
+        } catch (FileNotFoundException e){
+            System.err.println("File doesn't exist yet.");
         } catch (IOException | ClassNotFoundException e) {
-
+            System.err.println("Error reading users from file.");
         }
         return new Car[0];
     }
