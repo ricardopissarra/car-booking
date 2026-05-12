@@ -5,11 +5,12 @@ import java.util.UUID;
 
 public class UserService {
 
-    private UserDao userDao;
+    private final UserDao userDao;
 
-    public UserService() {
-        this.userDao = new UserDao();
+    public UserService(UserDao userDao) {
+        this.userDao = userDao;
     }
+
 
     public Optional<User> findByUserId(UUID userId) {
         User[] users = findAllUsers();

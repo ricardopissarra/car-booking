@@ -13,15 +13,16 @@ import java.util.UUID;
 
 public class CarBookingService {
 
-    private CarService carService;
-    private UserService userService;
-    private CarBookingDao carBookingDao;
+    private final CarService carService;
+    private final UserService userService;
+    private final CarBookingDao carBookingDao;
 
-    public CarBookingService() {
-        this.carService = new CarService();
-        this.userService = new UserService();
-        this.carBookingDao = new CarBookingDao();
+    public CarBookingService(CarService carService, UserService userService, CarBookingDao carBookingDao) {
+        this.carService = carService;
+        this.userService = userService;
+        this.carBookingDao = carBookingDao;
     }
+
 
     public CarBooking bookCar(UUID userId, UUID carId, LocalDate startDate, LocalDate
             endDate) {
