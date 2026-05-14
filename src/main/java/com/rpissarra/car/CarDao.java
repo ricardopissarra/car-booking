@@ -1,5 +1,7 @@
 package com.rpissarra.car;
 
+import java.util.List;
+
 public interface CarDao {
-    Car[] findAll();
+    List<Car> findAll();
 }

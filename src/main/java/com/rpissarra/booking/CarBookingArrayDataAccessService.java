@@ -1,44 +1,26 @@
 package com.rpissarra.booking;
 
-import java.util.Arrays;
+import java.util.List;
+import java.util.ArrayList;
 import java.util.Optional;
 import java.util.UUID;
 
 public class CarBookingArrayDataAccessService implements CarBookingDao {
 
-    private static CarBooking[] bookings;
-    private static int capacity = 2;
+    private static List<CarBooking> bookings;
 
     static {
-        bookings = new CarBooking[capacity];
+        bookings = new ArrayList<>();
     }
 
     @Override
-    public CarBooking[] findAll() {
+    public List<CarBooking> findAll() {
         return bookings;
     }
 
     @Override
     public void save(CarBooking booking) {
-        int nextAvailableIndex = findNextAvailableIndex();
-        if (nextAvailableIndex == -1) {
-            // Array is full, so I double de capacity and copy the current arr
-            // to the new arr
-            int newCapacity = capacity*2;
-            bookings = Arrays.copyOf(bookings, newCapacity);
-            nextAvailableIndex = capacity;
-            capacity = newCapacity;
-        }
-        bookings[nextAvailableIndex] = booking;
-    }
-
-    private int findNextAvailableIndex() {
-        for (int i = 0; i < bookings.length; i++) {
-            if (bookings[i] == null) {
-                return i;
-            }
-        }
-        return -1;
+        bookings.add(booking);
     }
 
     @Override
@@ -53,10 +35,9 @@ public class CarBookingArrayDataAccessService implements CarBookingDao {
 
     @Override
     public boolean deleteBookingById(UUID id) {
-
-        for (int i = 0; i < bookings.length; i++) {
-            if (bookings[i] != null && bookings[i].getId().equals(id)) {
-                bookings[i] = null;
+        for (CarBooking booking : bookings) {
+            if (booking.getId().equals(id)) {
+                bookings.remove(booking);
                 return true;
             }
         }

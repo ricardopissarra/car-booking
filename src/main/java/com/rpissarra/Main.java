@@ -13,10 +13,7 @@ import com.rpissarra.user.UserFileDataAccessService;
 import com.rpissarra.user.UserService;
 
 import java.time.LocalDate;
-import java.util.Arrays;
-import java.util.InputMismatchException;
-import java.util.Scanner;
-import java.util.UUID;
+import java.util.*;
 
 public class Main {
 
@@ -53,10 +50,10 @@ public class Main {
                 switch (input) {
                     case 1 -> bookCar(carBookingService, userService, carService, scanner);
                     case 2 -> viewAllUserBookedCars(scanner, userService, carBookingService);
-                    case 3 -> System.out.println(Arrays.toString(carBookingService.getAllBookings()));
-                    case 4 -> System.out.println(Arrays.toString(carBookingService.getAllAvailableCars()));
-                    case 5 -> System.out.println(Arrays.toString(carBookingService.getAllAvailableElectricCars()));
-                    case 6 -> System.out.println(Arrays.toString(userService.findAllUsers()));
+                    case 3 -> System.out.println(carBookingService.getAllBookings());
+                    case 4 -> System.out.println(carBookingService.getAllAvailableCars());
+                    case 5 -> System.out.println(carBookingService.getAllAvailableElectricCars());
+                    case 6 -> System.out.println(userService.findAllUsers());
                     case 7 -> deleteBooking(carBookingService, scanner);
                     case 8 -> loopIsActive = false;
                     default -> System.out.println("Invalid option");
@@ -74,11 +71,11 @@ public class Main {
                                       Scanner scanner) {
         try {
             scanner.nextLine();
-            CarBooking[] bookings = carBookingService.getAllBookings();
-            if (bookings.length == 0) {
+            List<CarBooking> bookings = carBookingService.getAllBookings();
+            if (bookings.isEmpty()) {
                 System.out.println("There are not active bookings");
             } else {
-                System.out.println(Arrays.toString(bookings));
+                System.out.println(bookings);
                 System.out.print("Select a booking to delete and enter the booking id: ");
                 String bookingId = scanner.nextLine();
 
@@ -99,11 +96,11 @@ public class Main {
                                 Scanner scanner) {
         try {
             scanner.nextLine();
-            System.out.println(Arrays.toString(userService.findAllUsers()));
+            System.out.println(userService.findAllUsers());
             System.out.print("Select a user and enter the user id: ");
             String userId = scanner.nextLine();
 
-            System.out.println(Arrays.toString(carService.findAllCars()));
+            System.out.println(carService.findAllCars());
             System.out.print("Select a car and enter the car id: ");
             String carId = scanner.nextLine();
 
@@ -133,11 +130,11 @@ public class Main {
                                               CarBookingService carBookingService) {
         try {
             scanner.nextLine();
-            System.out.println(Arrays.toString(userService.findAllUsers()));
+            System.out.println(userService.findAllUsers());
             System.out.print("Select a user and enter the user id: ");
 
             String userId = scanner.nextLine();
-            System.out.println(Arrays.toString(carBookingService.getAllUserBookedCars(UUID.fromString(userId))));
+            System.out.println(carBookingService.getAllUserBookedCars(UUID.fromString(userId)));
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

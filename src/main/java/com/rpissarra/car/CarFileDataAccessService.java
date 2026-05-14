@@ -1,6 +1,8 @@
 package com.rpissarra.car;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class CarFileDataAccessService implements CarDao {
 
@@ -11,22 +13,21 @@ public class CarFileDataAccessService implements CarDao {
     }
 
     @Override
-    public Car[] findAll() {
+    public List<Car> findAll() {
+        List<Car> carList = new ArrayList<>();
         try (FileInputStream fis = new FileInputStream(filePath);
              ObjectInputStream ois = new ObjectInputStream(fis)) {
-            int length = ois.readInt();
-            Car[] cars = new Car[length];
-            int index = 0;
-            for (Car c : cars) {
-                cars[index++] =(Car) ois.readObject();
-            }
-            return cars;
+                while (true) {
+                    carList.add((Car) ois.readObject());
+                }
+        } catch (EOFException ignored){
+            // end of file was reached, all lines added to list
         } catch (FileNotFoundException e){
             System.err.println("File doesn't exist yet.");
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Error reading users from file.");
         }
-        return new Car[0];
+        return carList;
     }
 
 }
