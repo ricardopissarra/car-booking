@@ -1,6 +1,8 @@
 package com.rpissarra.booking;
 
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,30 +15,28 @@ public class CarBookingFileDataAccessService implements CarBookingDao {
     }
 
     @Override
-    public CarBooking[] findAll() {
+    public List<CarBooking> findAll() {
+        List<CarBooking> bookings = new ArrayList<>();
         try (FileInputStream fis = new FileInputStream(filePath);
              ObjectInputStream ois = new ObjectInputStream(fis)) {
-            int length = ois.readInt();
-            CarBooking[] bookings = new CarBooking[length];
-            int index = 0;
-            for (CarBooking booking : bookings) {
-                bookings[index++] =(CarBooking) ois.readObject();
+            while (true) {
+                bookings.add((CarBooking) ois.readObject());
             }
-            return bookings;
+        } catch (EOFException ignore) {
+            // end of file was reached, all lines added to list
         } catch (FileNotFoundException e){
             System.err.println("File doesn't exist yet.");
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Error reading bookings from file.");
         }
-        return new CarBooking[0];
+        return bookings;
     }
 
     @Override
     public void save(CarBooking booking) {
-        CarBooking[] bookings = findAll();
+        List<CarBooking> bookings = findAll();
         try (FileOutputStream fos = new FileOutputStream(filePath);
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-            oos.writeInt((bookings.length + 1));
             for (CarBooking carBooking : bookings) {
                 oos.writeObject(carBooking);
             }
@@ -58,13 +58,10 @@ public class CarBookingFileDataAccessService implements CarBookingDao {
 
     @Override
     public boolean deleteBookingById(UUID id) {
-        CarBooking[] bookings = findAll();
+        List<CarBooking> bookings = findAll();
 
         try (FileOutputStream fos = new FileOutputStream(filePath);
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
-
-            oos.writeInt((bookings.length - 1));
-
             for (CarBooking cb : bookings) {
                 if (cb != null && cb.getId().equals(id)) {
                     continue;

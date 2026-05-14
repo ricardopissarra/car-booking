@@ -1,10 +1,11 @@
 package com.rpissarra.booking;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface CarBookingDao {
-    CarBooking[] findAll();
+    List<CarBooking> findAll();
 
     void save(CarBooking booking);
 

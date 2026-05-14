@@ -1,5 +1,6 @@
 package com.rpissarra.user;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,7 +14,7 @@ public class UserService {
 
 
     public Optional<User> findByUserId(UUID userId) {
-        User[] users = findAllUsers();
+        List<User> users = findAllUsers();
         for (User u : users) {
             if (u.getId().equals(userId)) {
                 return Optional.of(u);
@@ -22,7 +23,7 @@ public class UserService {
         return Optional.empty();
     }
 
-    public User[] findAllUsers() {
+    public List<User> findAllUsers() {
         return userDao.findAll();
     }
 }

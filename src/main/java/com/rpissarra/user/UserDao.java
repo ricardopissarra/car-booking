@@ -1,5 +1,7 @@
 package com.rpissarra.user;
 
+import java.util.List;
+
 public interface UserDao {
-    User[] findAll();
+    List<User> findAll();
 }

@@ -1,5 +1,6 @@
 package com.rpissarra.car;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -13,7 +14,7 @@ public class CarService {
 
 
     public Optional<Car> findByCarId(UUID carId) {
-        Car[] cars = carDao.findAll();
+        List<Car> cars = carDao.findAll();
         for (Car c : cars) {
             if (c.getId().equals(carId)) {
                 return Optional.of(c);
@@ -23,7 +24,7 @@ public class CarService {
     }
 
 
-    public Car[] findAllCars() {
+    public List<Car> findAllCars() {
         return carDao.findAll();
     }
 }

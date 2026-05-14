@@ -1,7 +1,8 @@
 package com.rpissarra.user;
 
-
 import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class UserFileDataAccessService implements UserDao {
 
@@ -12,21 +13,20 @@ public class UserFileDataAccessService implements UserDao {
     }
 
     @Override
-    public User[] findAll() {
+    public List<User> findAll() {
+        List<User> userList = new ArrayList<>();
         try (FileInputStream fis = new FileInputStream(filePath);
              ObjectInputStream ois = new ObjectInputStream(fis)) {
-            int length = ois.readInt();
-            User[] users = new User[length];
-            int index = 0;
-            for (User u : users) {
-                users[index++] =(User) ois.readObject();
+            while (true) {
+                userList.add((User) ois.readObject());
             }
-            return users;
+        } catch (EOFException ignored){
+            // end of file was reached, all lines added to list
         } catch (FileNotFoundException e){
             System.err.println("File doesn't exist yet.");
         } catch (IOException | ClassNotFoundException e) {
             System.err.println("Error reading users from file.");
         }
-        return new User[0];
+        return userList;
     }
 }
