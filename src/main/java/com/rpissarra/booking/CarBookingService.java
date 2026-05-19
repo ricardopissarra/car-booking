@@ -9,7 +9,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,11 +38,11 @@ public class CarBookingService {
             throw new IllegalArgumentException("Invalid start or end date!");
         }
 
-        List<CarBooking> bookings = carBookingDao.findAll();
-        for (CarBooking booking : bookings) {
-            if (booking != null && booking.getCar().equals(car) && booking.getStatus().equals(BookingStatus.ACTIVE))
-                throw new RuntimeException("Car %s is already booked!".formatted(car.getRegNumber()));
-        }
+        boolean isAlreadyBooked = carBookingDao.findAll().stream()
+                .anyMatch(cb -> cb.getCar().equals(car) && cb.getStatus().equals(BookingStatus.ACTIVE));
+
+        if (isAlreadyBooked) throw new RuntimeException("Car %s is already booked!".formatted(car.getRegNumber()));
+
 
         long numberOfDays = ChronoUnit.DAYS.between(startDate, endDate);
         BigDecimal price = car.getRentalPricePerDay().multiply(new BigDecimal(numberOfDays));
@@ -58,49 +57,24 @@ public class CarBookingService {
         User user = userService.findByUserId(userId)
                 .orElseThrow(() -> new RuntimeException("No user found with the id %s".formatted(userId)));
 
-        List<CarBooking> bookings = carBookingDao.findAll();
-        List<CarBooking> userBookedCars = new ArrayList<>();
-        for (int i = 0; i < bookings.size(); i++) {
-            if (bookings.get(i).getUser().equals(user)) {
-                userBookedCars.add(bookings.get(i));
-            }
-        }
-        return userBookedCars;
+        return carBookingDao.findAll().stream()
+                .filter(cb -> cb.getUser().equals(user))
+                .toList();
     }
 
     public List<Car> getAllAvailableElectricCars() {
-        List<Car> cars = carService.findAllCars();
         List<CarBooking> bookings = carBookingDao.findAll();
-        List<Car> availableElectricCars = new ArrayList<>();
-        for (Car c : cars) {
-            if (!c.isElectric()) continue;
-            boolean isBooked = false;
-            for (CarBooking cb : bookings) {
-                if (cb.getCar().equals(c))
-                    isBooked = true;
-            }
-            if (!isBooked) {
-                availableElectricCars.add(c);
-            }
-        }
-        return availableElectricCars;
+        return carService.findAllCars().stream()
+                .filter(c -> c.isElectric())
+                .filter(c -> !bookings.stream().map(CarBooking::getCar).toList().contains(c))
+                .toList();
     }
 
     public List<Car> getAllAvailableCars() {
-        List<Car> cars = carService.findAllCars();
         List<CarBooking> bookings = carBookingDao.findAll();
-        List<Car> availableElectricCars = new ArrayList<>();
-        for (Car c : cars) {
-            boolean isBooked = false;
-            for (CarBooking cb : bookings) {
-                if (cb.getCar().equals(c))
-                    isBooked = true;
-            }
-            if (!isBooked) {
-                availableElectricCars.add(c);
-            }
-        }
-        return availableElectricCars;
+        return carService.findAllCars().stream()
+                .filter(c -> !bookings.stream().map(CarBooking::getCar).toList().contains(c))
+                .toList();
     }
 
     public List<CarBooking> getAllBookings() {
@@ -109,9 +83,9 @@ public class CarBookingService {
     }
 
     public boolean deleteBooking(UUID uuid) {
-        carBookingDao.findById(uuid)
+        CarBooking booking = carBookingDao.findById(uuid)
                 .orElseThrow(() -> new RuntimeException("No booking found with id %s".formatted(uuid)));
 
-        return carBookingDao.deleteBookingById(uuid);
+        return carBookingDao.deleteBooking(booking);
     }
 }
