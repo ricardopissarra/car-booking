@@ -1,9 +1,6 @@
 package com.rpissarra.booking;
 
-import java.util.List;
-import java.util.ArrayList;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 public class CarBookingArrayDataAccessService implements CarBookingDao {
 
@@ -25,22 +22,13 @@ public class CarBookingArrayDataAccessService implements CarBookingDao {
 
     @Override
     public Optional<CarBooking> findById(UUID uuid) {
-        for (CarBooking cb : bookings) {
-            if (cb != null && cb.getId().equals(uuid)) {
-                return Optional.of(cb);
-            }
-        }
-        return Optional.empty();
+        return bookings.stream()
+                .filter(cb -> cb.getId().equals(uuid))
+                .findFirst();
     }
 
     @Override
-    public boolean deleteBookingById(UUID id) {
-        for (CarBooking booking : bookings) {
-            if (booking.getId().equals(id)) {
-                bookings.remove(booking);
-                return true;
-            }
-        }
-        return false;
+    public boolean deleteBooking(CarBooking booking) {
+        return bookings.remove(booking);
     }
 }

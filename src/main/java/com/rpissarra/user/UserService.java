@@ -14,13 +14,9 @@ public class UserService {
 
 
     public Optional<User> findByUserId(UUID userId) {
-        List<User> users = findAllUsers();
-        for (User u : users) {
-            if (u.getId().equals(userId)) {
-                return Optional.of(u);
-            }
-        }
-        return Optional.empty();
+        return findAllUsers().stream()
+                .filter(u -> u.getId().equals(userId))
+                .findFirst();
     }
 
     public List<User> findAllUsers() {

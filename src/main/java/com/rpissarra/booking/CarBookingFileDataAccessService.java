@@ -57,13 +57,13 @@ public class CarBookingFileDataAccessService implements CarBookingDao {
     }
 
     @Override
-    public boolean deleteBookingById(UUID id) {
+    public boolean deleteBooking(CarBooking booking) {
         List<CarBooking> bookings = findAll();
 
         try (FileOutputStream fos = new FileOutputStream(filePath);
              ObjectOutputStream oos = new ObjectOutputStream(fos)) {
             for (CarBooking cb : bookings) {
-                if (cb != null && cb.getId().equals(id)) {
+                if (cb != null && cb.equals(booking)) {
                     continue;
                 }
                 oos.writeObject(cb);
@@ -71,7 +71,7 @@ public class CarBookingFileDataAccessService implements CarBookingDao {
 
             return true;
         } catch (IOException e) {
-            System.err.println("Error deleting booking with id %s".formatted(id));
+            System.err.println("Error deleting booking with id %s".formatted(booking.getId()));
             return false;
         }
     }

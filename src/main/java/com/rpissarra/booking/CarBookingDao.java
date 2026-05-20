@@ -11,5 +11,5 @@ public interface CarBookingDao {
 
     Optional<CarBooking> findById(UUID uuid);
 
-    boolean deleteBookingById(UUID id);
+    boolean deleteBooking(CarBooking booking);
 }

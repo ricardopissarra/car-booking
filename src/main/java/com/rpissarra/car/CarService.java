@@ -14,13 +14,9 @@ public class CarService {
 
 
     public Optional<Car> findByCarId(UUID carId) {
-        List<Car> cars = carDao.findAll();
-        for (Car c : cars) {
-            if (c.getId().equals(carId)) {
-                return Optional.of(c);
-            }
-        }
-        return Optional.empty();
+        return findAllCars().stream()
+                .filter(c -> c.getId().equals(carId))
+                .findFirst();
     }
 
 
